@@ -12,7 +12,10 @@ let cachedProvider: AiProvider | undefined;
 export function getAiProvider(): AiProvider {
   if (cachedProvider) return cachedProvider;
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  // Trim defensively: env var UIs (Vercel's included) commonly introduce a
+  // trailing newline or stray whitespace when a key is pasted in, which
+  // otherwise turns a valid key into an "API key is invalid" 401.
+  const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
   if (!apiKey) {
     throw new Error("ANTHROPIC_API_KEY is not set on the server");
   }
